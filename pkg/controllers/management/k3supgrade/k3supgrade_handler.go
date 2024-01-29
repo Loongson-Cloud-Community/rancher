@@ -194,7 +194,7 @@ func IsNewerVersion(prevVersion, updatedVersion string) (bool, error) {
 	}
 }
 
-//nodeNeedsUpgrade checks all nodes in cluster, returns true if they still need to be upgraded
+// nodeNeedsUpgrade checks all nodes in cluster, returns true if they still need to be upgraded
 func (h *handler) nodesNeedUpgrade(cluster *v3.Cluster) (bool, error) {
 	v3NodeList, err := h.nodeLister.List(cluster.Name, labels.Everything())
 	if err != nil {

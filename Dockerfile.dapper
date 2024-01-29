@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM cr.loongnix.cn/library/debian:buster
 # FROM arm=armhf/ubuntu:16.04 arm64=arm64v8/ubuntu:18.04
 
 ARG DAPPER_HOST_ARCH
@@ -22,12 +22,12 @@ RUN apt-get update && \
     apt-get install -y gcc ca-certificates git wget curl vim less file xz-utils unzip && \
     rm -f /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN curl -sLf https://github.com/rancher/machine/releases/download/${CATTLE_MACHINE_VERSION}/rancher-machine-${ARCH}.tar.gz | tar xvzf - -C /usr/bin
+RUN curl -sLf https://github.com/Loongson-Cloud-Community/rancher_machine/releases/download/v0.15.0-rancher45/rancher-machine-loong64.tar.gz | tar xvzf - -C /usr/bin
 
-ENV GOLANG_ARCH_amd64=amd64 GOLANG_ARCH_arm=armv6l GOLANG_ARCH_arm64=arm64 GOLANG_ARCH=GOLANG_ARCH_${ARCH} \
+ENV GOLANG_ARCH_amd64=amd64 GOLANG_ARCH_arm=armv6l GOLANG_ARCH_arm64=arm64 GOLANG_ARCH_loong64=loong64 GOLANG_ARCH=GOLANG_ARCH_${ARCH} \
     GOPATH=/go PATH=/go/bin:/usr/local/go/bin:${PATH} SHELL=/bin/bash
 
-RUN wget -O - https://storage.googleapis.com/golang/go1.13.4.linux-${!GOLANG_ARCH}.tar.gz | tar -xzf - -C /usr/local
+RUN wget -O - http://ftp.loongnix.cn/toolchain/golang/go-1.20/abi1.0/go1.20.12.linux-loong64.tar.gz | tar -xzf - -C /usr/local
 
 RUN if [ "${ARCH}" == "amd64" ]; then \
     curl -sL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.20.0; \

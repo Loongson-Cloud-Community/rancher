@@ -53,12 +53,12 @@ type HelmPath struct {
 	KustomizeInJail string
 }
 
-//Labels that need added for kustomization
+// Labels that need added for kustomization
 type Label struct {
 	AppLabel string `json:"io.cattle.field/appId"`
 }
 
-//Marshal kustomization settings into YAML
+// Marshal kustomization settings into YAML
 type Kustomization struct {
 	CommonLabel Label    `json:"commonLabels"`
 	Resrouces   []string `json:"resources"`

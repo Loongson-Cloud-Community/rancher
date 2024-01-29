@@ -42,7 +42,7 @@ case $CHART_VERSION in
 esac
 
 if [ -z "$ARCH" ]; then
-    ARCH=amd64
+    ARCH=loong64
 fi
 
 echo "ARCH: $ARCH"

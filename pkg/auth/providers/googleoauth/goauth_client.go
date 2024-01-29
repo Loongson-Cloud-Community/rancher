@@ -11,7 +11,7 @@ import (
 	v3 "github.com/rancher/types/apis/management.cattle.io/v3"
 )
 
-//GClient implements a httpclient for google oauth
+// GClient implements a httpclient for google oauth
 type GClient struct {
 	httpClient *http.Client
 }

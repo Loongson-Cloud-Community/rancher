@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM cr.loongnix.cn/library/debian:buster
 RUN apt-get update && apt-get install -y git curl ca-certificates unzip xz-utils && \
     useradd rancher && \
     mkdir -p /var/lib/rancher/etcd /var/lib/cattle /opt/jail /opt/drivers/management-state/bin && \
@@ -11,7 +11,7 @@ RUN mkdir /root/.kube && \
     rm -f /bin/sh && ln -s /bin/bash /bin/sh
 WORKDIR /var/lib/rancher
 
-ARG ARCH=amd64
+ARG ARCH=loong64
 ARG IMAGE_REPO=rancher
 ARG SYSTEM_CHART_DEFAULT_BRANCH=release-v2.4
 ARG DASHBOARD_BRANCH=release-2.4
@@ -19,21 +19,21 @@ ARG DASHBOARD_BRANCH=release-2.4
 ARG RANCHER_METADATA_BRANCH=release-v2.4
 
 ENV CATTLE_SYSTEM_CHART_DEFAULT_BRANCH=$SYSTEM_CHART_DEFAULT_BRANCH
-ENV CATTLE_HELM_VERSION v2.16.8-rancher1
-ENV CATTLE_K3S_VERSION v1.17.2+k3s1
-ENV CATTLE_MACHINE_VERSION v0.15.0-rancher45
-ENV CATTLE_ETCD_VERSION v3.4.3
-ENV CATTLE_CHANNELSERVER_VERSION v0.3.0
-ENV LOGLEVEL_VERSION v0.1.3
-ENV TINI_VERSION v0.18.0
-ENV TELEMETRY_VERSION v0.5.12
-ENV KUBECTL_VERSION v1.17.6
-ENV DOCKER_MACHINE_LINODE_VERSION v0.1.8
-ENV LINODE_UI_DRIVER_VERSION v0.3.0
-ENV RANCHER_METADATA_BRANCH ${RANCHER_METADATA_BRANCH}
-ENV CATTLE_DASHBOARD_INDEX https://releases.rancher.com/dashboard/${DASHBOARD_BRANCH}/index.html
-ENV HELM_VERSION v3.2.0
-ENV KUSTOMIZE_VERSION v3.5.4
+ENV CATTLE_HELM_VERSION=v2.16.8-rancher1
+ENV CATTLE_K3S_VERSION=v1.17.2+k3s1
+ENV CATTLE_MACHINE_VERSION=v0.15.0-rancher45
+ENV CATTLE_ETCD_VERSION=v3.4.3
+ENV CATTLE_CHANNELSERVER_VERSION=v0.3.0
+ENV LOGLEVEL_VERSION=v0.1.5
+ENV TINI_VERSION=v0.18.0
+ENV TELEMETRY_VERSION=v0.5.12
+ENV KUBECTL_VERSION=v1.17.6
+ENV DOCKER_MACHINE_LINODE_VERSION=v0.1.8
+ENV LINODE_UI_DRIVER_VERSION=v0.3.0
+ENV RANCHER_METADATA_BRANCH=${RANCHER_METADATA_BRANCH}
+ENV CATTLE_DASHBOARD_INDEX=https://releases.rancher.com/dashboard/${DASHBOARD_BRANCH}/index.html
+ENV HELM_VERSION=v3.2.0
+ENV KUSTOMIZE_VERSION=v3.5.4
 
 RUN mkdir -p /var/lib/rancher-data/local-catalogs/system-library && \
     mkdir -p /var/lib/rancher-data/local-catalogs/library && \
@@ -43,34 +43,41 @@ RUN mkdir -p /var/lib/rancher-data/local-catalogs/system-library && \
     git clone -b master --single-branch https://github.com/rancher/helm3-charts /var/lib/rancher-data/local-catalogs/helm3-library
 
 
-RUN curl -sLf https://github.com/rancher/machine/releases/download/${CATTLE_MACHINE_VERSION}/rancher-machine-${ARCH}.tar.gz | tar xvzf - -C /usr/bin && \
-    curl -sLf https://github.com/rancher/loglevel/releases/download/${LOGLEVEL_VERSION}/loglevel-${ARCH}-${LOGLEVEL_VERSION}.tar.gz | tar xvzf - -C /usr/bin && \
-    curl -LO https://github.com/linode/docker-machine-driver-linode/releases/download/${DOCKER_MACHINE_LINODE_VERSION}/docker-machine-driver-linode_linux-amd64.zip && \
-    unzip docker-machine-driver-linode_linux-amd64.zip -d /opt/drivers/management-state/bin && \
-    rm docker-machine-driver-linode_linux-amd64.zip
+RUN curl -sLf https://github.com/Loongson-Cloud-Community/rancher_machine/releases/download/v0.15.0-rancher45/rancher-machine-loong64.tar.gz | tar xvzf - -C /usr/bin && \
+    curl -sLf https://github.com/Loongson-Cloud-Community/rancher_loglevel/releases/download/v0.1.5/loglevel-loong64-v0.1.5.tar.gz | tar xvzf - -C /usr/bin && \
+    curl -LO https://github.com/Loongson-Cloud-Community/docker-machine-driver-linode/releases/download/v0.1.8/docker-machine-driver-linode_linux-$ARCH.zip && \
+    unzip docker-machine-driver-linode_linux-$ARCH.zip -d /opt/drivers/management-state/bin && \
+    rm docker-machine-driver-linode_linux-$ARCH.zip
 
 ENV TINI_URL_amd64=https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini \
     TINI_URL_arm64=https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-arm64 \
+    TINI_URL_loong64=https://github.com/Loongson-Cloud-Community/tini/releases/download/${TINI_VERSION}/tini-loong64 \
     TINI_URL=TINI_URL_${ARCH}
 
 ENV HELM_URL_V2_amd64=https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-helm \
     HELM_URL_V2_arm64=https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-helm-arm64 \
+    HELM_URL_V2_loong64=https://github.com/Loongson-Cloud-Community/rancher_helm/releases/download/${CATTLE_HELM_VERSION}/rancher-helm-loong64 \
     HELM_URL_V2=HELM_URL_V2_${ARCH} \
-    HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
+    HELM_URL_V3=https://github.com/Loongson-Cloud-Community/helm/releases/download/v3.2.0/helm-v3.2.0-linux-loong64.tar.gz \
     TILLER_URL_amd64=https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-tiller \
     TILLER_URL_arm64=https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-tiller-arm64 \
+    TILLER_URL_loong64=https://github.com/Loongson-Cloud-Community/rancher_helm/releases/download/${CATTLE_HELM_VERSION}/rancher-tiller-loong64 \
     TILLER_URL=TILLER_URL_${ARCH} \
     K3S_URL_amd64=https://github.com/rancher/k3s/releases/download/${CATTLE_K3S_VERSION}/k3s \
     K3S_URL_arm64=https://github.com/rancher/k3s/releases/download/${CATTLE_K3S_VERSION}/k3s-arm64 \
+    K3S_URL_loong64=https://github.com/Loongson-Cloud-Community/k3s/releases/download/v1.21.0%2Bk3s1/k3s-loong64 \
     K3S_URL=K3S_URL_${ARCH} \
     CHANNELSERVER_URL_amd64=https://github.com/rancher/channelserver/releases/download/${CATTLE_CHANNELSERVER_VERSION}/channelserver-amd64 \
     CHANNELSERVER_URL_arm64=https://github.com/rancher/channelserver/releases/download/${CATTLE_CHANNELSERVER_VERSION}/channelserver-arm64 \
+    CHANNELSERVER_URL_loong64=https://github.com/Loongson-Cloud-Community/rancher_channelserver/releases/download/v0.3.0/channelserver-loong64 \
     CHANNELSERVER_URL=CHANNELSERVER_URL_${ARCH} \
     ETCD_URL_amd64=https://github.com/etcd-io/etcd/releases/download/${CATTLE_ETCD_VERSION}/etcd-${CATTLE_ETCD_VERSION}-linux-amd64.tar.gz \
     ETCD_URL_arm64=https://github.com/etcd-io/etcd/releases/download/${CATTLE_ETCD_VERSION}/etcd-${CATTLE_ETCD_VERSION}-linux-arm64.tar.gz \
+    ETCD_URL_loong64=https://github.com/Loongson-Cloud-Community/etcd/releases/download/${CATTLE_ETCD_VERSION}/etcd-${CATTLE_ETCD_VERSION}-linux-loong64.tar.gz \
     ETCD_URL=ETCD_URL_${ARCH} \
     KUSTOMIZE_URL_amd64=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz \
     KUSTOMIZE_URL_arm64=https://github.com/brendarearden/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_arm64.tar.gz \
+    KUSTOMIZE_URL_loong64=https://github.com/Loongson-Cloud-Community/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_loong64.tar.gz \
     KUSTOMIZE_URL=KUSTOMIZE_URL_${ARCH}
 
 RUN if [ "${ARCH}" == "arm64" ]; then \
@@ -89,16 +96,16 @@ RUN curl -sLf ${!HELM_URL_V2} > /usr/bin/rancher-helm && \
     chmod +x /usr/bin/rancher-helm /usr/bin/rancher-tiller
 
 # set up helm 3
-RUN curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
+RUN curl -sLf ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
     mv /usr/bin/helm /usr/bin/helm_v3 && \
     chmod +x /usr/bin/kustomize
-
+#COPY channelserver /usr/bin/channelserver
 RUN curl -sLf ${!TINI_URL} > /usr/bin/tini && \
     curl -sLf ${!CHANNELSERVER_URL} > /usr/bin/channelserver && \
     curl -sLf ${!K3S_URL} > /usr/bin/k3s && \
     curl -sfL ${!ETCD_URL} | tar xvzf - --strip-components=1 -C /usr/bin/ etcd-${CATTLE_ETCD_VERSION}-linux-${ARCH}/etcd etcd-${CATTLE_ETCD_VERSION}-linux-${ARCH}/etcdctl && \
-    curl -sLf https://github.com/rancher/telemetry/releases/download/${TELEMETRY_VERSION}/telemetry-${ARCH} > /usr/bin/telemetry && \
-    curl -sLf https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl > /usr/bin/kubectl && \
+    curl -sLf https://github.com/Loongson-Cloud-Community/rancher_telemetry/releases/download/v0.5.12/telemetry-loong64 > /usr/bin/telemetry && \
+    curl -sLf https://github.com/Loongson-Cloud-Community/kubernetes/releases/download/v1.17.6/kubelet > /usr/bin/kubectl && \
     chmod +x /usr/bin/tini /usr/bin/telemetry /usr/bin/k3s /usr/bin/kubectl /usr/bin/channelserver && \
     mkdir -p /var/lib/rancher-data/driver-metadata
 
@@ -131,7 +138,7 @@ RUN mkdir -p /usr/share/rancher/ui && \
     cd /var/lib/rancher
 
 ENV CATTLE_CLI_URL_DARWIN  https://releases.rancher.com/cli2/${CATTLE_CLI_VERSION}/rancher-darwin-amd64-${CATTLE_CLI_VERSION}.tar.gz
-ENV CATTLE_CLI_URL_LINUX   https://releases.rancher.com/cli2/${CATTLE_CLI_VERSION}/rancher-linux-amd64-${CATTLE_CLI_VERSION}.tar.gz
+ENV CATTLE_CLI_URL_LINUX   https://github.com/Loongson-Cloud-Community/rancher_cli/releases/download/v2.4.6/rancher-linux-loong64-v2.4.6.tar.gz
 ENV CATTLE_CLI_URL_WINDOWS https://releases.rancher.com/cli2/${CATTLE_CLI_VERSION}/rancher-windows-386-${CATTLE_CLI_VERSION}.zip
 
 ARG VERSION=dev

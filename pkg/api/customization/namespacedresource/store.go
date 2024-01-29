@@ -12,7 +12,7 @@ import (
 	client "github.com/rancher/types/client/management/v3"
 )
 
-//NamespacedStore makes sure that the namespaced resources are assigned to a given namespace
+// NamespacedStore makes sure that the namespaced resources are assigned to a given namespace
 type namespacedStore struct {
 	types.Store
 	NamespaceInterface v1.NamespaceInterface
